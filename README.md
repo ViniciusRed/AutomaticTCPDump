@@ -1,14 +1,35 @@
-# AutomaticBashTCPDump
+# AutomaticTCPDump
 
 Requires tcpdump installed in the system.
 
-You are meant to run this bash in screen session or in background and leave it running. Interface name eth0 needs to match your WAN main interface name, so eth0, ens3, eth0:0, etc.. Change it to both lines 2 and 11 if required.
+## Usage
+```bash
+./capture.sh [debug] [test]
+```
 
- -gt 30000 is the amount of PPS it requires to see in order to start the tcpdump command. Change this to high enough, so that it wont start from normal traffic.
- 
- -c 20000 is the amount of packets that tcpdump will capture before ending the process. Default value -c 20000 is about 5-30MB .pcap file.
+## Description
 
-You can autostart this by adding following cron job: 
-@reboot screen -dmS capture /path/to/file/capture.sh
+The purpose of this script is to automatically detect potential network attacks by monitoring the number of packets passing through a network interface. If the packet rate exceeds a certain threshold, the script captures a sample of network traffic for further analysis.
 
-Above needs screen package installed in the system.
+The script takes optional input arguments. It can be run in debug mode by passing "debug" as an argument, which provides more detailed output. It also has a "test" mode that captures a sample of traffic regardless of the current packet rate.
+
+The main output of this script is a packet capture file (.pcap) containing network traffic data. When a capture is made, the script uploads this file to a temporary file hosting service and can send a notification with the file link to a Discord channel.
+
+To achieve its purpose, the script first identifies the main network interface and sets up some configuration variables. It then enters a loop where it continuously monitors the packet rate on the network interface. If the rate exceeds a predefined threshold (default is 30,000 packets per second), it triggers a packet capture using the tcpdump command.
+
+The captured packets are saved to a file, which is then uploaded to a file hosting service. If configured, a notification with the file link is sent to a Discord channel. After capturing and uploading, the script waits for a set period before resuming its monitoring.
+
+## Configuration
+
+The script uses several configuration variables that can be modified to suit your needs. These variables are defined at the beginning of the script and include the packet count threshold, the capture count, the interval after capture, and the Discord webhook URL.
+
+```bash
+# Packet count threshold
+threshold=30000 ## 30000 is the default
+## Capture Count
+capture_count=5000 ## 5000 is the default
+# Interval after capture
+sleep_after_capture=230 ## 230 is the default
+# Discord webhook URL
+discord_webhook_url="YOUR_DISCORD_WEBHOOK_URL_HERE" ## Set your Discord webhook URL here
+```
