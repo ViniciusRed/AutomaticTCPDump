@@ -1,10 +1,14 @@
 # AutomaticTCPDump
 
+## Requirements
+
 Requires tcpdump installed in the system.
 
 ## Usage
 ```bash
-./capture.sh [debug] [test]
+./capture.sh & # Run in background is default
+./capture.sh debug # Run using debug mode
+./capture.sh test # Run using test mode
 ```
 
 ## Description
